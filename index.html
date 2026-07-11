@@ -4,208 +4,445 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Freunde-Chat</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #1e1e2f;
-    color: #eee;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  header {
-    background: #27293d;
-    padding: 16px;
-    text-align: center;
-    font-size: 1.4em;
-    font-weight: bold;
-    border-bottom: 2px solid #3d3f5c;
-  }
-  #chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .msg {
-    background: #2d2f45;
-    padding: 8px 12px;
-    border-radius: 10px;
-    max-width: 70%;
-    align-self: flex-start;
-    word-wrap: break-word;
-  }
-  .msg .name {
-    font-weight: bold;
-    color: #7aa2ff;
-    margin-right: 6px;
-  }
-  .msg .time {
-    font-size: 0.75em;
-    color: #999;
-    margin-left: 6px;
-  }
-  #inputBar {
-    display: flex;
-    padding: 12px;
-    background: #27293d;
-    border-top: 2px solid #3d3f5c;
-    gap: 8px;
-  }
-  #messageInput {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1em;
-  }
-  #sendBtn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background: #7aa2ff;
-    color: #1e1e2f;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  #sendBtn:hover { background: #5c85e0; }
 
-  /* Namens-Overlay */
-  #nameOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 10;
-  }
-  #nameOverlay input {
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1em;
-    width: 220px;
-    text-align: center;
-  }
-  #nameOverlay button {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 8px;
-    background: #7aa2ff;
-    font-weight: bold;
-    cursor: pointer;
-  }
+<style>
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #1e1e2f;
+  color: #eee;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background:#27293d;
+  padding:16px;
+  text-align:center;
+  font-size:1.4em;
+  font-weight:bold;
+}
+
+#chat {
+  flex:1;
+  overflow-y:auto;
+  padding:16px;
+}
+
+.msg {
+  background:#2d2f45;
+  padding:8px 12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  max-width:70%;
+}
+
+.name {
+  color:#7aa2ff;
+  font-weight:bold;
+}
+
+.time {
+  color:#999;
+  font-size:0.75em;
+  margin-left:8px;
+}
+
+#inputBar {
+  display:flex;
+  padding:12px;
+  background:#27293d;
+  gap:8px;
+}
+
+#messageInput {
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#7aa2ff;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+
+#nameOverlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:12px;
+}
+
+
+#nameOverlay input {
+  padding:10px;
+  width:230px;
+  border-radius:8px;
+  border:none;
+  text-align:center;
+}
+
 </style>
+
 </head>
+
+
 <body>
 
+
 <div id="nameOverlay">
-  <h2>Wie heißt du?</h2>
-  <input id="nameInput" type="text" placeholder="Dein Name" maxlength="20">
-  <button id="nameConfirm">Chat betreten</button>
+
+<h2>💬 Freunde-Chat</h2>
+
+<input id="nameInput" placeholder="Benutzername">
+
+<input id="passwordInput" type="password" placeholder="Passwort">
+
+
+<button id="registerBtn">
+Registrieren
+</button>
+
+<button id="loginBtn">
+Einloggen
+</button>
+
 </div>
 
-<header>💬 Freunde-Chat</header>
+
+
+<header>
+💬 Freunde-Chat
+</header>
+
+
 <div id="chat"></div>
+
+
 <div id="inputBar">
-  <input id="messageInput" type="text" placeholder="Nachricht schreiben..." maxlength="500">
-  <button id="sendBtn">Senden</button>
+
+<input id="messageInput" placeholder="Nachricht schreiben..." maxlength="500">
+
+<button id="sendBtn">
+Senden
+</button>
+
 </div>
 
-<!-- Firebase SDK (kostenlos, keine eigene Server-Installation nötig) -->
+
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
+
+
 <script>
-  // ============================================
-  // HIER DEINE EIGENE FIREBASE-KONFIGURATION EINFÜGEN
-  // ============================================
- const firebaseConfig = {
-  apiKey: "AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
-  authDomain: "freunde-chat-e2a5f.firebaseapp.com",
-  databaseURL: "https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
-  projectId: "freunde-chat-e2a5f",
-  storageBucket: "freunde-chat-e2a5f.firebasestorage.app",
-  messagingSenderId: "21516870361",
-  appId: "1:21516870361:web:6725720e54444e8a4054c8",
-  measurementId: "G-P12K19NLHK"
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
+
+authDomain: "freunde-chat-e2a5f.firebaseapp.com",
+
+databaseURL: "https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
+
+projectId: "freunde-chat-e2a5f",
+
+storageBucket: "freunde-chat-e2a5f.firebasestorage.app",
+
+messagingSenderId: "21516870361",
+
+appId: "1:21516870361:web:6725720e54444e8a4054c8"
+
 };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const messagesRef = db.ref("messages");
 
-  let username = "";
 
-  const nameOverlay = document.getElementById("nameOverlay");
-  const nameInput = document.getElementById("nameInput");
-  const nameConfirm = document.getElementById("nameConfirm");
-  const chat = document.getElementById("chat");
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
+firebase.initializeApp(firebaseConfig);
 
-  const savedName = localStorage.getItem("chatUsername");
-  if (savedName) {
-    nameInput.value = savedName;
-  }
 
-  nameConfirm.addEventListener("click", enterChat);
-  nameInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") enterChat();
-  });
 
-  function enterChat() {
-    const val = nameInput.value.trim();
-    if (!val) {
-      alert("Bitte gib einen Namen ein!");
-      return;
-    }
-    username = val;
-    localStorage.setItem("chatUsername", username);
-    nameOverlay.style.display = "none";
-    messageInput.focus();
-  }
+const db = firebase.database();
 
-  function sendMessage() {
-    const text = messageInput.value.trim();
-    if (!text || !username) return;
-    messagesRef.push({
-      name: username,
-      text: text,
-      time: Date.now()
-    });
-    messageInput.value = "";
-  }
 
-  sendBtn.addEventListener("click", sendMessage);
-  messageInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage();
-  });
+const messagesRef = db.ref("messages");
 
-  messagesRef.limitToLast(100).on("child_added", (snapshot) => {
-    const msg = snapshot.val();
-    const div = document.createElement("div");
-    div.className = "msg";
-    const date = new Date(msg.time);
-    const timeStr = date.toLocaleTimeString("de-DE", {hour: '2-digit', minute:'2-digit'});
-    div.innerHTML = `<span class="name">${escapeHtml(msg.name)}</span>${escapeHtml(msg.text)}<span class="time">${timeStr}</span>`;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-  });
+const usersRef = db.ref("users");
 
-  function escapeHtml(str) {
-    const d = document.createElement("div");
-    d.innerText = str;
-    return d.innerHTML;
-  }
+
+
+let username = "";
+
+
+
+const overlay = document.getElementById("nameOverlay");
+
+const nameInput = document.getElementById("nameInput");
+
+const passwordInput = document.getElementById("passwordInput");
+
+const registerBtn = document.getElementById("registerBtn");
+
+const loginBtn = document.getElementById("loginBtn");
+
+const chat = document.getElementById("chat");
+
+const messageInput = document.getElementById("messageInput");
+
+const sendBtn = document.getElementById("sendBtn");
+
+
+
+
+
+// Registrierung
+
+registerBtn.onclick = function(){
+
+
+let name = nameInput.value.trim();
+
+let password = passwordInput.value.trim();
+
+
+
+if(!name || !password){
+
+alert("Bitte Name und Passwort eingeben!");
+
+return;
+
+}
+
+
+
+usersRef.child(name).once("value", snap=>{
+
+
+if(snap.exists()){
+
+
+alert("Dieser Benutzername ist schon vergeben!");
+
+
+}
+
+else{
+
+
+usersRef.child(name).set({
+
+password:password
+
+});
+
+
+username=name;
+
+
+localStorage.setItem("chatUsername",username);
+
+
+overlay.style.display="none";
+
+
+alert("Account erstellt!");
+
+}
+
+
+});
+
+
+};
+
+
+
+
+
+
+// Login
+
+
+loginBtn.onclick=function(){
+
+
+let name=nameInput.value.trim();
+
+let password=passwordInput.value.trim();
+
+
+
+usersRef.child(name).once("value",snap=>{
+
+
+if(!snap.exists()){
+
+
+alert("Benutzer existiert nicht!");
+
+return;
+
+}
+
+
+
+let user=snap.val();
+
+
+
+if(user.password===password){
+
+
+username=name;
+
+
+localStorage.setItem("chatUsername",username);
+
+
+overlay.style.display="none";
+
+
+}
+
+else{
+
+
+alert("Falsches Passwort!");
+
+}
+
+
+});
+
+
+};
+
+
+
+
+
+
+// Nachricht senden
+
+
+function sendMessage(){
+
+
+let text=messageInput.value.trim();
+
+
+
+if(!text || !username)
+return;
+
+
+
+messagesRef.push({
+
+name:username,
+
+text:text,
+
+time:Date.now()
+
+});
+
+
+
+messageInput.value="";
+
+
+}
+
+
+
+sendBtn.onclick=sendMessage;
+
+
+
+messageInput.addEventListener("keydown",e=>{
+
+
+if(e.key==="Enter")
+sendMessage();
+
+
+});
+
+
+
+
+
+
+// Nachrichten laden
+
+
+messagesRef.limitToLast(100).on("child_added",snapshot=>{
+
+
+let msg=snapshot.val();
+
+
+let div=document.createElement("div");
+
+
+div.className="msg";
+
+
+let date=new Date(msg.time);
+
+
+
+div.innerHTML=
+
+`<span class="name">${escapeHtml(msg.name)}</span>
+${escapeHtml(msg.text)}
+<span class="time">${date.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}</span>`;
+
+
+
+chat.appendChild(div);
+
+
+chat.scrollTop=chat.scrollHeight;
+
+
+
+});
+
+
+
+
+
+
+function escapeHtml(str){
+
+let d=document.createElement("div");
+
+d.innerText=str;
+
+return d.innerHTML;
+
+}
+
+
 </script>
+
 
 </body>
 </html>
