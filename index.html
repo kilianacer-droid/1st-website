@@ -6,94 +6,133 @@
 <title>Freunde-Chat</title>
 
 <style>
-* { box-sizing: border-box; }
+
+* { box-sizing:border-box; }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #1e1e2f;
-  color: #eee;
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+font-family:'Segoe UI',Arial,sans-serif;
+background:#1e1e2f;
+color:#eee;
+margin:0;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
+
 
 header {
-  background:#27293d;
-  padding:16px;
-  text-align:center;
-  font-size:1.4em;
-  font-weight:bold;
+background:#27293d;
+padding:16px;
+text-align:center;
+font-size:1.4em;
+font-weight:bold;
 }
+
 
 #chat {
-  flex:1;
-  overflow-y:auto;
-  padding:16px;
+flex:1;
+overflow-y:auto;
+padding:16px;
 }
+
 
 .msg {
-  background:#2d2f45;
-  padding:8px 12px;
-  border-radius:10px;
-  margin-bottom:8px;
-  max-width:70%;
+background:#2d2f45;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
+display:flex;
+align-items:center;
+gap:10px;
 }
+
+
+.avatar {
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+}
+
+
+.messageContent {
+display:flex;
+flex-direction:column;
+}
+
 
 .name {
-  color:#7aa2ff;
-  font-weight:bold;
+color:#7aa2ff;
+font-weight:bold;
 }
+
 
 .time {
-  color:#999;
-  font-size:0.75em;
-  margin-left:8px;
+color:#999;
+font-size:.75em;
 }
+
+
 
 #inputBar {
-  display:flex;
-  padding:12px;
-  background:#27293d;
-  gap:8px;
+display:flex;
+padding:12px;
+background:#27293d;
+gap:8px;
 }
+
 
 #messageInput {
-  flex:1;
-  padding:10px;
-  border-radius:8px;
-  border:none;
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
 }
 
+
+
 button {
-  padding:10px 20px;
-  border:none;
-  border-radius:8px;
-  background:#7aa2ff;
-  cursor:pointer;
-  font-weight:bold;
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:#7aa2ff;
+cursor:pointer;
+font-weight:bold;
 }
+
 
 
 #nameOverlay {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.8);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  gap:12px;
+
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.8);
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+gap:12px;
+
 }
 
 
 #nameOverlay input {
-  padding:10px;
-  width:230px;
-  border-radius:8px;
-  border:none;
-  text-align:center;
+
+padding:10px;
+width:230px;
+border-radius:8px;
+border:none;
+text-align:center;
+
 }
+
+
+#avatarInput {
+
+color:white;
+
+}
+
 
 </style>
 
@@ -107,18 +146,25 @@ button {
 
 <h2>💬 Freunde-Chat</h2>
 
+
 <input id="nameInput" placeholder="Benutzername">
 
+
 <input id="passwordInput" type="password" placeholder="Passwort">
+
+
+<input id="avatarInput" type="file" accept="image/*">
 
 
 <button id="registerBtn">
 Registrieren
 </button>
 
+
 <button id="loginBtn">
 Einloggen
 </button>
+
 
 </div>
 
@@ -145,7 +191,10 @@ Senden
 
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
 
 
@@ -154,19 +203,19 @@ Senden
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
+apiKey:"AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
 
-authDomain: "freunde-chat-e2a5f.firebaseapp.com",
+authDomain:"freunde-chat-e2a5f.firebaseapp.com",
 
-databaseURL: "https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
+databaseURL:"https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
 
-projectId: "freunde-chat-e2a5f",
+projectId:"freunde-chat-e2a5f",
 
-storageBucket: "freunde-chat-e2a5f.firebasestorage.app",
+storageBucket:"freunde-chat-e2a5f.firebasestorage.app",
 
-messagingSenderId: "21516870361",
+messagingSenderId:"21516870361",
 
-appId: "1:21516870361:web:6725720e54444e8a4054c8"
+appId:"1:21516870361:web:6725720e54444e8a4054c8"
 
 };
 
@@ -178,6 +227,9 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
 
+const storage = firebase.storage();
+
+
 
 const messagesRef = db.ref("messages");
 
@@ -185,52 +237,51 @@ const usersRef = db.ref("users");
 
 
 
-let username = "";
+let username="";
+
+let avatarUrl="";
 
 
 
-const overlay = document.getElementById("nameOverlay");
+const overlay=document.getElementById("nameOverlay");
 
-const nameInput = document.getElementById("nameInput");
+const nameInput=document.getElementById("nameInput");
 
-const passwordInput = document.getElementById("passwordInput");
+const passwordInput=document.getElementById("passwordInput");
 
-const registerBtn = document.getElementById("registerBtn");
+const avatarInput=document.getElementById("avatarInput");
 
-const loginBtn = document.getElementById("loginBtn");
+const registerBtn=document.getElementById("registerBtn");
 
-const chat = document.getElementById("chat");
+const loginBtn=document.getElementById("loginBtn");
 
-const messageInput = document.getElementById("messageInput");
+const chat=document.getElementById("chat");
 
-const sendBtn = document.getElementById("sendBtn");
+const messageInput=document.getElementById("messageInput");
 
+const sendBtn=document.getElementById("sendBtn");
 
+// REGISTRIEREN MIT PROFILBILD
 
-
-
-// Registrierung
-
-registerBtn.onclick = function(){
-
+registerBtn.onclick = async function(){
 
 let name = nameInput.value.trim();
-
 let password = passwordInput.value.trim();
+let file = avatarInput.files[0];
 
 
+if(!name || !password || !file){
 
-if(!name || !password){
-
-alert("Bitte Name und Passwort eingeben!");
+alert("Bitte Benutzername, Passwort und Bild auswählen!");
 
 return;
 
 }
 
 
+// prüfen ob Benutzername existiert
 
-usersRef.child(name).once("value", snap=>{
+usersRef.child(name).once("value", async snap=>{
 
 
 if(snap.exists()){
@@ -238,23 +289,44 @@ if(snap.exists()){
 
 alert("Dieser Benutzername ist schon vergeben!");
 
+return;
+
 
 }
 
-else{
 
+// Bild hochladen
+
+let storageRef = storage.ref("avatars/" + name);
+
+
+await storageRef.put(file);
+
+
+// Bild-Link holen
+
+let downloadURL = await storageRef.getDownloadURL();
+
+
+
+// Benutzer speichern
 
 usersRef.child(name).set({
 
-password:password
+password: password,
+
+avatar: downloadURL
 
 });
 
 
-username=name;
+
+username = name;
+
+avatarUrl = downloadURL;
 
 
-localStorage.setItem("chatUsername",username);
+localStorage.setItem("chatUsername", username);
 
 
 overlay.style.display="none";
@@ -262,7 +334,6 @@ overlay.style.display="none";
 
 alert("Account erstellt!");
 
-}
 
 
 });
@@ -275,7 +346,7 @@ alert("Account erstellt!");
 
 
 
-// Login
+// LOGIN
 
 
 loginBtn.onclick=function(){
@@ -297,6 +368,7 @@ alert("Benutzer existiert nicht!");
 
 return;
 
+
 }
 
 
@@ -305,10 +377,13 @@ let user=snap.val();
 
 
 
-if(user.password===password){
+if(user.password === password){
 
 
 username=name;
+
+avatarUrl=user.avatar;
+
 
 
 localStorage.setItem("chatUsername",username);
@@ -337,7 +412,8 @@ alert("Falsches Passwort!");
 
 
 
-// Nachricht senden
+
+// NACHRICHT SENDEN
 
 
 function sendMessage(){
@@ -358,6 +434,8 @@ name:username,
 
 text:text,
 
+avatar:avatarUrl,
+
 time:Date.now()
 
 });
@@ -371,6 +449,7 @@ messageInput.value="";
 
 
 
+
 sendBtn.onclick=sendMessage;
 
 
@@ -378,8 +457,11 @@ sendBtn.onclick=sendMessage;
 messageInput.addEventListener("keydown",e=>{
 
 
-if(e.key==="Enter")
+if(e.key==="Enter"){
+
 sendMessage();
+
+}
 
 
 });
@@ -389,7 +471,10 @@ sendMessage();
 
 
 
-// Nachrichten laden
+
+
+
+// NACHRICHTEN LADEN
 
 
 messagesRef.limitToLast(100).on("child_added",snapshot=>{
@@ -398,21 +483,52 @@ messagesRef.limitToLast(100).on("child_added",snapshot=>{
 let msg=snapshot.val();
 
 
+
 let div=document.createElement("div");
 
 
 div.className="msg";
 
 
+
 let date=new Date(msg.time);
 
 
 
-div.innerHTML=
+div.innerHTML = `
 
-`<span class="name">${escapeHtml(msg.name)}</span>
+<img class="avatar" src="${msg.avatar || 'https://via.placeholder.com/40'}">
+
+
+<div class="messageContent">
+
+<span class="name">
+
+${escapeHtml(msg.name)}
+
+</span>
+
+
+<span>
+
 ${escapeHtml(msg.text)}
-<span class="time">${date.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}</span>`;
+
+</span>
+
+
+<span class="time">
+
+${date.toLocaleTimeString("de-DE",{
+hour:"2-digit",
+minute:"2-digit"
+})}
+
+</span>
+
+
+</div>
+
+`;
 
 
 
@@ -422,8 +538,8 @@ chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
 
 
-
 });
+
 
 
 
