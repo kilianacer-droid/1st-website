@@ -3,101 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Freunde-Chat</title>
 
 <style>
 
-* { box-sizing:border-box; }
+* {
+box-sizing:border-box;
+}
+
 
 body {
+
 font-family:'Segoe UI',Arial,sans-serif;
+
 background:#1e1e2f;
-color:#eee;
+
+color:white;
+
 margin:0;
+
 height:100vh;
+
 display:flex;
+
 flex-direction:column;
+
 }
+
 
 
 header {
+
 background:#27293d;
+
 padding:16px;
+
 text-align:center;
+
 font-size:1.4em;
+
 font-weight:bold;
+
 }
+
 
 
 #chat {
+
 flex:1;
+
 overflow-y:auto;
+
 padding:16px;
+
 }
+
 
 
 .msg {
+
 background:#2d2f45;
+
 padding:10px;
+
 border-radius:10px;
+
 margin-bottom:10px;
+
 display:flex;
+
 align-items:center;
+
 gap:10px;
+
 }
+
 
 
 .avatar {
-width:40px;
-height:40px;
+
+width:45px;
+
+height:45px;
+
 border-radius:50%;
+
 object-fit:cover;
+
 }
+
 
 
 .messageContent {
+
 display:flex;
+
 flex-direction:column;
+
 }
+
 
 
 .name {
+
 color:#7aa2ff;
+
 font-weight:bold;
+
 }
 
 
+
 .time {
+
+font-size:0.75em;
+
 color:#999;
-font-size:.75em;
+
 }
 
 
 
 #inputBar {
+
 display:flex;
-padding:12px;
-background:#27293d;
+
 gap:8px;
+
+padding:12px;
+
+background:#27293d;
+
 }
 
 
+
 #messageInput {
+
 flex:1;
+
 padding:10px;
+
 border-radius:8px;
+
 border:none;
+
 }
 
 
 
 button {
+
 padding:10px 20px;
+
 border:none;
+
 border-radius:8px;
+
 background:#7aa2ff;
-cursor:pointer;
+
 font-weight:bold;
+
+cursor:pointer;
+
 }
 
 
@@ -105,26 +174,41 @@ font-weight:bold;
 #nameOverlay {
 
 position:fixed;
+
 inset:0;
+
 background:rgba(0,0,0,.8);
+
 display:flex;
+
 justify-content:center;
+
 align-items:center;
+
 flex-direction:column;
+
 gap:12px;
 
+z-index:10;
+
 }
+
 
 
 #nameOverlay input {
 
-padding:10px;
 width:230px;
+
+padding:10px;
+
 border-radius:8px;
+
 border:none;
+
 text-align:center;
 
 }
+
 
 
 #avatarInput {
@@ -142,7 +226,9 @@ color:white;
 <body>
 
 
+
 <div id="nameOverlay">
+
 
 <h2>💬 Freunde-Chat</h2>
 
@@ -175,20 +261,27 @@ Einloggen
 </header>
 
 
+
 <div id="chat"></div>
+
 
 
 <div id="inputBar">
 
+
 <input id="messageInput" placeholder="Nachricht schreiben..." maxlength="500">
+
 
 <button id="sendBtn">
 Senden
 </button>
 
+
 </div>
 
 
+
+<!-- Firebase -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 
@@ -199,23 +292,21 @@ Senden
 
 
 <script>
-
-
 const firebaseConfig = {
 
-apiKey:"AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
+apiKey: "AIzaSyDQ2pB1Tylh8B4OxTT0AoteA0DOmhFl96k",
 
-authDomain:"freunde-chat-e2a5f.firebaseapp.com",
+authDomain: "freunde-chat-e2a5f.firebaseapp.com",
 
-databaseURL:"https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
+databaseURL: "https://freunde-chat-e2a5f-default-rtdb.firebaseio.com",
 
-projectId:"freunde-chat-e2a5f",
+projectId: "freunde-chat-e2a5f",
 
-storageBucket:"freunde-chat-e2a5f.firebasestorage.app",
+storageBucket: "freunde-chat-e2a5f.firebasestorage.app",
 
-messagingSenderId:"21516870361",
+messagingSenderId: "21516870361",
 
-appId:"1:21516870361:web:6725720e54444e8a4054c8"
+appId: "1:21516870361:web:6725720e54444e8a4054c8"
 
 };
 
@@ -237,49 +328,63 @@ const usersRef = db.ref("users");
 
 
 
-let username="";
+let username = "";
 
-let avatarUrl="";
+let avatarUrl = "";
 
 
 
-const overlay=document.getElementById("nameOverlay");
+const defaultAvatar =
+"https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-const nameInput=document.getElementById("nameInput");
 
-const passwordInput=document.getElementById("passwordInput");
 
-const avatarInput=document.getElementById("avatarInput");
+const overlay = document.getElementById("nameOverlay");
 
-const registerBtn=document.getElementById("registerBtn");
+const nameInput = document.getElementById("nameInput");
 
-const loginBtn=document.getElementById("loginBtn");
+const passwordInput = document.getElementById("passwordInput");
 
-const chat=document.getElementById("chat");
+const avatarInput = document.getElementById("avatarInput");
 
-const messageInput=document.getElementById("messageInput");
+const registerBtn = document.getElementById("registerBtn");
 
-const sendBtn=document.getElementById("sendBtn");
+const loginBtn = document.getElementById("loginBtn");
 
-// REGISTRIEREN MIT PROFILBILD
+const chat = document.getElementById("chat");
+
+const messageInput = document.getElementById("messageInput");
+
+const sendBtn = document.getElementById("sendBtn");
+
+
+
+
+
+
+// REGISTRIEREN
+
 
 registerBtn.onclick = async function(){
 
+
 let name = nameInput.value.trim();
+
 let password = passwordInput.value.trim();
+
 let file = avatarInput.files[0];
 
 
-if(!name || !password || !file){
 
-alert("Bitte Benutzername, Passwort und Bild auswählen!");
+if(!name || !password){
+
+alert("Bitte Benutzername und Passwort eingeben!");
 
 return;
 
 }
 
 
-// prüfen ob Benutzername existiert
 
 usersRef.child(name).once("value", async snap=>{
 
@@ -295,41 +400,52 @@ return;
 }
 
 
-// Bild hochladen
 
-let storageRef = storage.ref("avatars/" + name);
-
-
-await storageRef.put(file);
-
-
-// Bild-Link holen
-
-let downloadURL = await storageRef.getDownloadURL();
+let avatar = defaultAvatar;
 
 
 
-// Benutzer speichern
+// wenn Bild ausgewählt wurde
+
+if(file){
+
+
+let upload = storage.ref("avatars/" + name);
+
+
+await upload.put(file);
+
+
+avatar = await upload.getDownloadURL();
+
+
+}
+
+
+
 
 usersRef.child(name).set({
 
-password: password,
+password:password,
 
-avatar: downloadURL
+avatar:avatar
 
 });
 
 
 
-username = name;
+username=name;
 
-avatarUrl = downloadURL;
+avatarUrl=avatar;
 
 
-localStorage.setItem("chatUsername", username);
+
+localStorage.setItem("chatUsername",username);
+
 
 
 overlay.style.display="none";
+
 
 
 alert("Account erstellt!");
@@ -339,7 +455,9 @@ alert("Account erstellt!");
 });
 
 
+
 };
+
 
 
 
@@ -355,6 +473,16 @@ loginBtn.onclick=function(){
 let name=nameInput.value.trim();
 
 let password=passwordInput.value.trim();
+
+
+
+if(!name || !password){
+
+alert("Bitte alles ausfüllen!");
+
+return;
+
+}
 
 
 
@@ -382,19 +510,18 @@ if(user.password === password){
 
 username=name;
 
-avatarUrl=user.avatar;
-
+avatarUrl=user.avatar || defaultAvatar;
 
 
 localStorage.setItem("chatUsername",username);
 
 
+
 overlay.style.display="none";
 
 
-}
 
-else{
+}else{
 
 
 alert("Falsches Passwort!");
@@ -405,38 +532,45 @@ alert("Falsches Passwort!");
 });
 
 
+
 };
 
-
-
-
-
-
-
 // NACHRICHT SENDEN
-
 
 function sendMessage(){
 
 
-let text=messageInput.value.trim();
+let text = messageInput.value.trim();
 
 
 
-if(!text || !username)
+if(!text){
+
 return;
+
+}
+
+
+
+if(!username){
+
+alert("Bitte erst einloggen!");
+
+return;
+
+}
 
 
 
 messagesRef.push({
 
-name:username,
+name: username,
 
-text:text,
+text: text,
 
-avatar:avatarUrl,
+avatar: avatarUrl || defaultAvatar,
 
-time:Date.now()
+time: Date.now()
 
 });
 
@@ -449,15 +583,14 @@ messageInput.value="";
 
 
 
-
-sendBtn.onclick=sendMessage;
-
+sendBtn.onclick = sendMessage;
 
 
-messageInput.addEventListener("keydown",e=>{
+
+messageInput.addEventListener("keydown", function(e){
 
 
-if(e.key==="Enter"){
+if(e.key === "Enter"){
 
 sendMessage();
 
@@ -472,35 +605,34 @@ sendMessage();
 
 
 
-
-
 // NACHRICHTEN LADEN
 
 
-messagesRef.limitToLast(100).on("child_added",snapshot=>{
+messagesRef.limitToLast(100).on("child_added", snapshot=>{
 
 
-let msg=snapshot.val();
+let msg = snapshot.val();
 
 
 
-let div=document.createElement("div");
+let div = document.createElement("div");
 
 
 div.className="msg";
 
 
 
-let date=new Date(msg.time);
+let date = new Date(msg.time);
 
 
 
 div.innerHTML = `
 
-<img class="avatar" src="${msg.avatar || 'https://via.placeholder.com/40'}">
+<img class="avatar" src="${msg.avatar || defaultAvatar}">
 
 
 <div class="messageContent">
+
 
 <span class="name">
 
@@ -535,7 +667,9 @@ minute:"2-digit"
 chat.appendChild(div);
 
 
-chat.scrollTop=chat.scrollHeight;
+
+chat.scrollTop = chat.scrollHeight;
+
 
 
 });
@@ -557,8 +691,10 @@ return d.innerHTML;
 }
 
 
+
 </script>
 
 
 </body>
+
 </html>
